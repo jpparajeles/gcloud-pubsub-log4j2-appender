@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="STDOUT">
+      <PatternLayout pattern="%msg%n"/>
+    </Console>
+
+    <GoogleCloudPubsub name="gcloud_logging_not_from_gce"
+                        projectId="gcloud-projectId"
+                        topic="topic">
+      <PatternLayout pattern="%msg%n"/>
+      <GoogleCloudCredentials
+          serviceAccountId="serviceId@developer.gserviceaccount.com"
+          serviceAccountPrivateKeyP12FileName="file.p12"/>
+    </GoogleCloudPubsub>
+
+    <GoogleCloudPubsub name="gcloud_logging_from_gce"
+                       topic="topic"
+                       autoCreateTopic="true">
+      <PatternLayout pattern="%msg%n"/>
+    </GoogleCloudPubsub>
+  </Appenders>
+  <Loggers>
+    <Logger name="gcloud_logging_not_from_gce"
+            level="trace"
+            additivity="false"
+            includeLocation="false">
+      <AppenderRef ref="gcloud_logging_not_from_gce"/>
+    </Logger>
+    <Logger name="gcloud_logging_from_gce"
+            level="trace"
+            additivity="false"
+            includeLocation="false">
+      <AppenderRef ref="gcloud_logging_from_gce"/>
+    </Logger>
+    <Root level="debug"
+          includeLocation="false">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+</Configuration>
