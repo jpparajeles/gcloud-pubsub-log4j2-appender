@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 
-@Plugin(name = "googleCloudCredentials", category = Node.CATEGORY, printObject = true)
+//@Plugin(name = "googleCloudCredentials", category = Node.CATEGORY, printObject = true)
 public class GoogleCloudCredentials {
   private final boolean useComputeCredentials;
   private final String serviceAccountId;
@@ -91,10 +91,12 @@ public class GoogleCloudCredentials {
     return new ComputeCredential.Builder(transport, jacksonFactory).build();
   }
 
-  @PluginFactory
+//  @PluginFactory
   public static GoogleCloudCredentials createGoogleCloudCredentials(
-      @PluginAttribute(value = "serviceAccountId") final String serviceAccountId,
-      @PluginAttribute(value = "serviceAccountPrivateKeyP12FileName") final String serviceAccountPrivateKeyP12FileName) {
+//      @PluginAttribute(value = "serviceAccountId")
+      final String serviceAccountId,
+//      @PluginAttribute(value = "serviceAccountPrivateKeyP12FileName")
+      final String serviceAccountPrivateKeyP12FileName) {
     return newBuilder()
         .withServiceAccountId(serviceAccountId)
         .withServiceAccountPrivateKeyP12FileName(serviceAccountPrivateKeyP12FileName)

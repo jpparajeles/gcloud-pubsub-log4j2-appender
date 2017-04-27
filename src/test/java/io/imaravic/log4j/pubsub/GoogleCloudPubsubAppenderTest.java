@@ -39,7 +39,7 @@ public class GoogleCloudPubsubAppenderTest {
     final LogEvent logEvent = mock(LogEvent.class);
     appender.append(logEvent);
 
-    verify(googleCloudPubsubManager).write(eq(logEvent));
+    verify(googleCloudPubsubManager).write(eq(logEvent),eq(appender.getLayout()));
   }
 
   @Test

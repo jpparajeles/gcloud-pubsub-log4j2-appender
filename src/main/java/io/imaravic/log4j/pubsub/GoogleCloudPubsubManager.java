@@ -28,12 +28,14 @@ import com.google.api.services.pubsub.model.PubsubMessage;
 import com.google.api.services.pubsub.model.Topic;
 import com.google.common.annotations.VisibleForTesting;
 
+import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractManager;
 import org.apache.logging.log4j.core.appender.AppenderLoggingException;
 import org.apache.logging.log4j.core.appender.ManagerFactory;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -110,6 +112,29 @@ public class GoogleCloudPubsubManager extends AbstractManager {
       } catch (final IOException e) {
         throw new AppenderLoggingException("Publishing message to topic " +
                                            "\"" + fullyDefinedTopicName + "\" failed", e);
+      }
+    }
+  }
+  
+  public synchronized void write(final LogEvent event, Layout<? extends Serializable> layout) {
+    final String logMsg = event.getMessage().getFormattedMessage();
+    
+    final PubsubMessage pubsubMessage = new PubsubMessage();
+    pubsubMessage.encodeData(layout.toByteArray(event));
+    
+    pubsubMessagesBuffer.add(pubsubMessage);
+    
+    if (event.isEndOfBatch()) {
+      final List<PubsubMessage> entriesToWrite = pubsubMessagesBuffer;
+      pubsubMessagesBuffer = Lists.newArrayList();
+      
+      final PublishRequest publishRequest =
+          new PublishRequest().setMessages(entriesToWrite);
+      try {
+        writeToGoogleCloudLogging(publishRequest);
+      } catch (final IOException e) {
+        throw new AppenderLoggingException("Publishing message to topic " +
+            "\"" + fullyDefinedTopicName + "\" failed", e);
       }
     }
   }

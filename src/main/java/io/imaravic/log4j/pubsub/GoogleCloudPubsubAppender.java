@@ -49,7 +49,7 @@ public class GoogleCloudPubsubAppender extends AbstractAppender {
 
   @Override
   public void append(LogEvent event) {
-    googleCloudPubsubManager.write(event);
+    googleCloudPubsubManager.write(event, getLayout());
   }
 
   @PluginBuilderFactory
@@ -65,14 +65,21 @@ public class GoogleCloudPubsubAppender extends AbstractAppender {
     @PluginElement("Filter")
     private Filter filter;
 
-    @PluginElement("GoogleCloudCredentials")
-    private GoogleCloudCredentials googleCloudCredentials = GoogleCloudCredentials.newBuilder()
-        .withComputeCredentials(true)
-        .build();
-
+//    @PluginElement("GoogleCloudCredentials")
+//    private GoogleCloudCredentials googleCloudCredentials = GoogleCloudCredentials.newBuilder()
+//        .withComputeCredentials(true)
+//        .build();
+    
+    @PluginBuilderAttribute
+    private String serviceAccountId;
+    
+    @PluginBuilderAttribute
+    private String serviceAccountPrivateKeyP12FileName;
+    
+    
     @PluginBuilderAttribute
     @Required
-    private String name;
+    private String name = "";
 
     @PluginBuilderAttribute
     private boolean ignoreExceptions = true;
@@ -93,6 +100,12 @@ public class GoogleCloudPubsubAppender extends AbstractAppender {
     @Override
     public GoogleCloudPubsubAppender build() {
       try {
+  
+        GoogleCloudCredentials googleCloudCredentials =
+            serviceAccountId == null
+                ? GoogleCloudCredentials.newBuilder().withComputeCredentials(true).build()
+                : GoogleCloudCredentials.createGoogleCloudCredentials(serviceAccountId,serviceAccountPrivateKeyP12FileName);
+        
         return new GoogleCloudPubsubAppender(name,
                                               filter,
                                               layout,
