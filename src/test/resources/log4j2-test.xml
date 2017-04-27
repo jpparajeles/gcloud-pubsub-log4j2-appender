@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<Configuration status="WARN">
+<Configuration status="trace">
   <Appenders>
     <Console name="STDOUT">
       <PatternLayout pattern="%msg%n"/>

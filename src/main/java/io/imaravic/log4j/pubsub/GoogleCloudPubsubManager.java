@@ -58,7 +58,7 @@ public class GoogleCloudPubsubManager extends AbstractManager {
                            final boolean autoCreateTopic,
                            final int maxRetryTimeMillis)
       throws GeneralSecurityException, IOException {
-    super(name);
+    super(null, name);
 
     fullyDefinedTopicName =
         createFullyDefinedTopicName(
