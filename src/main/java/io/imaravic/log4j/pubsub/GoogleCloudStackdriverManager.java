@@ -1,15 +1,33 @@
+/*
+ * Copyright (c) 2017 José Pablo Parajeles
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
 package io.imaravic.log4j.pubsub;
 
+
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Lists;
 import com.google.api.services.logging.v2.Logging;
 import com.google.api.services.logging.v2.LoggingScopes;
 import com.google.api.services.logging.v2.model.LogEntry;
 import com.google.api.services.logging.v2.model.MonitoredResource;
 import com.google.api.services.logging.v2.model.WriteLogEntriesRequest;
-import com.google.common.collect.Lists;
-import io.imaravic.log4j.pubsub.util.GoogleCloudMetadata;
+import com.google.common.annotations.VisibleForTesting;
 import io.imaravic.log4j.pubsub.util.RetryHttpInitializerWrapper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Layout;
@@ -23,6 +41,8 @@ import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+
+
 //import com.google.api.services.logging.v2.
 
 /**
@@ -35,38 +55,48 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
   private static final String APPLICATION_NAME = "GoogleCloudStackdriver-Log4j2Appender";
 
 
-  Logging stackdriverLoggingClient;
-  String monitoredResource;
-  String logName;
-  List<LogEntry> logsBuffer = Lists.newArrayList();
-
-  public GoogleCloudStackdriverManager(final String name,
-                                       final HttpTransport transport,
-                                       final GoogleCloudMetadata googleCloudMetadata,
-                                       final GoogleCloudCredentials googleCloudCredentials,
-                                       final String googleCloudProjectId,
-                                       final String resourceName,
-                                       final String logName,
-                                       final int maxRetryTimeMillis)
+  private Logging stackdriverLoggingClient;
+  private String monitoredResource;
+  private String logName;
+  private List<LogEntry> logsBuffer = Lists.newArrayList();
+  
+  @VisibleForTesting
+  GoogleCloudStackdriverManager(final String name,
+                                final HttpTransport transport,
+                                final GoogleCloudCredentials googleCloudCredentials,
+                                final String resourceName,
+                                final String logName,
+                                final int maxRetryTimeMillis)
       throws GeneralSecurityException, IOException
   {
     super(null, name);
     this.monitoredResource = resourceName;
     this.logName = logName;
-
-
-    this.stackdriverLoggingClient = createStackDriverLoggingClient(transport,googleCloudCredentials,maxRetryTimeMillis);
+  
+    System.out.println(this.testInterception());
+    
+    System.out.println("Calling constructor with credentials: " + googleCloudCredentials);
+    this.stackdriverLoggingClient = createStackdriverLoggingClient(transport,googleCloudCredentials,maxRetryTimeMillis);
+  }
+  
+  private static String testInterception() {
+    return "sorry not intercepted :(";
   }
 
-  private Logging createStackDriverLoggingClient(HttpTransport transport, GoogleCloudCredentials googleCloudCredentials,
-                                                 int maxRetryTimeMillis) throws GeneralSecurityException, IOException {
+  private static Logging createStackdriverLoggingClient(final HttpTransport transport,
+                                                 final GoogleCloudCredentials googleCloudCredentials,
+                                                 final int maxRetryTimeMillis)
+      throws GeneralSecurityException, IOException {
     final JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
+    Credential credential = googleCloudCredentials.getCredential(transport,
+        jacksonFactory,
+        LoggingScopes.all());
+    System.out.println("This method should be intercepted and injected with mocks");
+    System.out.println(credential);
     return new Logging.Builder(transport,
         jacksonFactory,
         new RetryHttpInitializerWrapper(
-            googleCloudCredentials.getCredential(transport,
-                jacksonFactory,
-                LoggingScopes.all()),
+            credential,
             maxRetryTimeMillis
         )).setApplicationName(APPLICATION_NAME).build();
   }
@@ -93,14 +123,19 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
       writeLogEntriesRequest.setLogName(this.logName).setResource(monitoredResource);
 
       try {
-        stackdriverLoggingClient.entries().write(writeLogEntriesRequest).execute();
+        writeToGoogleCloudLogging(writeLogEntriesRequest);
       }
       catch (IOException e){
         throw new AppenderLoggingException("Publishing message to Stackdriver Logging failed",e);
       }
     }
   }
-
+  
+  @VisibleForTesting
+  void writeToGoogleCloudLogging(WriteLogEntriesRequest writeLogEntriesRequest) throws IOException {
+    stackdriverLoggingClient.entries().write(writeLogEntriesRequest).execute();
+  }
+  
   private String translate(Level level){
     if (level.isLessSpecificThan(Level.DEBUG)){
       return "DEBUG";
@@ -119,7 +154,6 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
 
   public static GoogleCloudStackdriverManager getManager(final String name,
                                                          final GoogleCloudCredentials googleCloudCredentials,
-                                                         final String googleCloudProjectId,
                                                          final String resourceName,
                                                          final String logName,
                                                          final int maxRetryTimeMillis){
@@ -130,12 +164,9 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
           public GoogleCloudStackdriverManager createManager(String name, Object data) {
             try{
               final HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
-              final GoogleCloudMetadata googleCloudMetadata = new GoogleCloudMetadata(transport);
               return new GoogleCloudStackdriverManager(name,
                   transport,
-                  googleCloudMetadata,
                   googleCloudCredentials,
-                  googleCloudProjectId,
                   resourceName,
                   logName,
                   maxRetryTimeMillis);
@@ -146,7 +177,6 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
           }
 
         },null);
-
   }
 
 

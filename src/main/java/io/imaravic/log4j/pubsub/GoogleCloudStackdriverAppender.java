@@ -23,6 +23,7 @@ import static io.imaravic.log4j.pubsub.GoogleCloudStackdriverManager.getManager;
 
 @Plugin(name = "GoogleCloudStackdriver", category = Node.CATEGORY, elementType = "appender", printObject = true)
 public class GoogleCloudStackdriverAppender extends AbstractAppender {
+  private static final long serialVersionUID = 1L;
 
   private final GoogleCloudStackdriverManager googleCloudStackdriverManager;
 
@@ -41,8 +42,8 @@ public class GoogleCloudStackdriverAppender extends AbstractAppender {
   }
 
   @PluginBuilderFactory
-  public static GoogleCloudPubsubAppender.Builder newBuilder() {
-    return new GoogleCloudPubsubAppender.Builder();
+  public static GoogleCloudStackdriverAppender.Builder newBuilder() {
+    return new Builder();
   }
 
   public static class Builder implements org.apache.logging.log4j.core.util.Builder<GoogleCloudStackdriverAppender> {
@@ -96,7 +97,6 @@ public class GoogleCloudStackdriverAppender extends AbstractAppender {
             ignoreExceptions,
             getManager(name,
                 googleCloudCredentials,
-                projectId,
                 resourceName,
                 logName,
                 maxRetryTimeMillis));

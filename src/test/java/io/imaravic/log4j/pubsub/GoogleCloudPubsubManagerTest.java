@@ -30,11 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GoogleCloudPubsubManager.class})
@@ -60,12 +56,15 @@ public class GoogleCloudPubsubManagerTest {
                                              any(HttpTransport.class),
                                              any(GoogleCloudCredentials.class),
                                              anyInt());
+  
+    PowerMockito.doReturn("THIS WAS INTERCETED YAY").when(GoogleCloudPubsubManager.class, "testInterception");
 
     when(googleCloudMetadata.fetchFromPath("project/project-id"))
         .thenReturn("project_id");
 
     when(googleCloudCredentials.usingComputeCredentials())
         .thenReturn(true);
+    
     when(googleCloudCredentials.getServiceAccountId())
         .thenReturn(null);
   }
@@ -74,9 +73,10 @@ public class GoogleCloudPubsubManagerTest {
   public void testBootstrappingManagerFromGCEOnCompute() throws Exception {
     when(googleCloudMetadata.fetchFromPath("instance/attributes/"))
         .thenReturn("");
-
+    System.out.println("CALLING CONSTRUCTOR. SHOULD BE INTERCEPTED.");
+    System.out.println(googleCloudCredentials);
     GoogleCloudPubsubManager googleCloudPubsubManager =
-        PowerMockito.spy(new GoogleCloudPubsubManager("name",
+          PowerMockito.spy(new GoogleCloudPubsubManager("name",
                                                       httpTransport,
                                                       googleCloudMetadata,
                                                       googleCloudCredentials,
@@ -84,7 +84,7 @@ public class GoogleCloudPubsubManagerTest {
                                                       "topic",
                                                       false,
                                                       1));
-
+    
     doNothing().when(googleCloudPubsubManager)
         .writeToGoogleCloudLogging(any(PublishRequest.class));
 
@@ -210,18 +210,10 @@ public class GoogleCloudPubsubManagerTest {
   private static Log4jLogEvent buildLogEvent(final String logMsg,
                                              final String timestamp,
                                              final Level level) {
-    return Log4jLogEvent.createEvent("loggerName",
-                                     null,
-                                     "loggerFQCN",
-                                     level,
-                                     new SimpleMessage(logMsg),
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     new DateTime(timestamp)
-                                         .getValue());
+    return Log4jLogEvent.newBuilder().setLoggerName("loggerName")
+        .setLoggerFqcn("loggerFQCN")
+        .setLevel(level)
+        .setMessage(new SimpleMessage(logMsg))
+        .setTimeMillis(new DateTime(timestamp).getValue()).build();
   }
 }

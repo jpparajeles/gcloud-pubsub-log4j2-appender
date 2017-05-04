@@ -16,6 +16,7 @@
 
 package io.imaravic.log4j.pubsub;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
@@ -61,18 +62,26 @@ public class GoogleCloudPubsubManager extends AbstractManager {
                            final int maxRetryTimeMillis)
       throws GeneralSecurityException, IOException {
     super(null, name);
-
     fullyDefinedTopicName =
         createFullyDefinedTopicName(
             getGoogleCloudProjectId(googleCloudProjectId, googleCloudMetadata),
             topic);
-
+    System.out.println("INSIDE THE CONSTRUCTOR");
+    System.out.println("CALLING CREATE PUBSUBCLIENT BUT WOW");
+  
+    System.out.println(this.testInterception());
+  
+    System.out.println(googleCloudCredentials);
     this.pubsubClient = createPubsubClient(transport,
                                            googleCloudCredentials,
                                            maxRetryTimeMillis);
     if (autoCreateTopic) {
       createTopic();
     }
+  }
+  
+  private static String testInterception() {
+    return "NOT INTERCEPTED SORRY :(";
   }
 
   private static String createFullyDefinedTopicName(final String googleCloudProjectId,
@@ -190,18 +199,20 @@ public class GoogleCloudPubsubManager extends AbstractManager {
       return googleCloudProjectId;
     }
   }
-
+  
   private static Pubsub createPubsubClient(final HttpTransport transport,
                                             final GoogleCloudCredentials credentials,
                                             final int maxRetryTimeMillis)
       throws GeneralSecurityException, IOException {
     final JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
+    Credential credential = credentials.getCredential(transport,
+        jacksonFactory,
+        PubsubScopes.all());
+    System.out.println(credential);
     return new Pubsub.Builder(transport,
                                jacksonFactory,
                                new RetryHttpInitializerWrapper(
-                                   credentials.getCredential(transport,
-                                                             jacksonFactory,
-                                                             PubsubScopes.all()),
+                                   credential,
                                    maxRetryTimeMillis))
         .setApplicationName(APPLICATION_NAME)
         .build();

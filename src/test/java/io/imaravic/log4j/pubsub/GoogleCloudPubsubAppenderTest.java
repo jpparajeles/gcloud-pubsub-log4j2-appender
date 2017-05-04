@@ -33,7 +33,7 @@ public class GoogleCloudPubsubAppenderTest {
                                              anyString(),
                                              anyBoolean(),
                                              anyInt())).thenReturn(googleCloudPubsubManager);
-
+    
     final GoogleCloudPubsubAppender appender = GoogleCloudPubsubAppender.newBuilder().build();
 
     final LogEvent logEvent = mock(LogEvent.class);
