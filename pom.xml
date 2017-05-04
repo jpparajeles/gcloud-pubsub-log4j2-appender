@@ -30,6 +30,12 @@
       <version>${google-api-pubsub.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-logging</artifactId>
+      <version>v2-rev548-1.22.0</version>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
