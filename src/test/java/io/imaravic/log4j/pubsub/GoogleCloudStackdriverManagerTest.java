@@ -96,7 +96,7 @@ public class GoogleCloudStackdriverManagerTest {
     List<LogEntry> entries = writeLogEntriesRequestArgumentCaptor.getValue().getEntries();
     assertEquals(1, entries.size());
 
-    assertEquals("LogMsg", entries.get(0).getTextPayload(), "UTF-8");
+    assertEquals("The messages should be equal", "LogMsg\n", entries.get(0).getTextPayload());
   }
 
   @Test
@@ -187,7 +187,7 @@ public class GoogleCloudStackdriverManagerTest {
     List<LogEntry> entries = writeLogEntriesRequestArgumentCaptor.getValue().getEntries();
     assertEquals(1, entries.size());
 
-    assertEquals("LogMsg", entries.get(0).getTextPayload());
+    assertEquals("LogMsg\n", entries.get(0).getTextPayload());
   }
   
   private static Log4jLogEvent buildLogEvent(final String logMsg,
