@@ -200,7 +200,6 @@ public class GoogleCloudPubsubManager extends AbstractManager {
     Credential credential = credentials.getCredential(transport,
         jacksonFactory,
         PubsubScopes.all());
-    System.out.println(credential);
     return new Pubsub.Builder(transport,
                                jacksonFactory,
                                new RetryHttpInitializerWrapper(

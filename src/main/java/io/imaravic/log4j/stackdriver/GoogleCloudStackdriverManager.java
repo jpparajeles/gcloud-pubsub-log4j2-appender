@@ -71,11 +71,9 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
     
     this.monitoredResource = resourceName;
     this.logName = logName;
-  
-//    System.out.println(testInterception());
+    
     this.stackdriverLoggingClient = createStackdriverLoggingClient(transport,googleCloudCredentials,maxRetryTimeMillis);
     
-//    System.out.println("Calling constructor with credentials: " + googleCloudCredentials);
   }
   
   private static String testInterception() {
@@ -90,8 +88,7 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
     Credential credential = googleCloudCredentials.getCredential(transport,
         jacksonFactory,
         LoggingScopes.all());
-    System.out.println("This method should be intercepted and injected with mocks");
-    System.out.println(credential);
+    
     return new Logging.Builder(transport,
         jacksonFactory,
         new RetryHttpInitializerWrapper(
