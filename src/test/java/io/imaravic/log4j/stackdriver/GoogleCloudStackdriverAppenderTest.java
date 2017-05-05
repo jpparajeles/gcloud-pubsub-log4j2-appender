@@ -1,5 +1,6 @@
-package io.imaravic.log4j.pubsub;
+package io.imaravic.log4j.stackdriver;
 
+import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.apache.logging.log4j.core.LogEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;

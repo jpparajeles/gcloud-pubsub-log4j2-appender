@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<Configuration status="trace">
+<Configuration>
   <Appenders>
     <Console name="STDOUT">
       <PatternLayout pattern="%msg%n"/>
@@ -9,7 +9,7 @@
     <GoogleCloudPubsub name="gcloud_logging_not_from_gce"
                        projectId="gcloud-projectId"
                        topic="topic"
-                       serviceAccountId="serviceId@developer.gserviceaccount.com"
+                       serviceAccountId="service1Id@developer.gserviceaccount.com"
                        serviceAccountPrivateKeyP12FileName="file.p12">
       <PatternLayout pattern="%msg%n"/>
 
@@ -21,6 +21,22 @@
                        autoCreateTopic="true">
       <PatternLayout pattern="%msg%n"/>
     </GoogleCloudPubsub>
+
+    <GoogleCloudStackdriver name="gcloud_stack_logging_not_from_gce"
+                            resourceName="gce"
+                            logName="projects/[PROJECT_ID]/logs/[LOG_ID]"
+                            serviceAccountId="service2Id@developer.gserviceaccount.com"
+                            serviceAccountPrivateKeyP12FileName="file2.p12">
+      <PatternLayout pattern="%msg%n"/>
+
+    </GoogleCloudStackdriver>
+
+    <GoogleCloudStackdriver name="gcloud_stack_logging_from_gce"
+                            resourceName="gce"
+                            logName="projects/[PROJECT_ID]/logs/[LOG_ID]">
+      <PatternLayout pattern="%msg%n"/>
+    </GoogleCloudStackdriver>
+
   </Appenders>
   <Loggers>
     <Logger name="gcloud_logging_not_from_gce"
@@ -34,6 +50,18 @@
             additivity="false"
             includeLocation="false">
       <AppenderRef ref="gcloud_logging_from_gce"/>
+    </Logger>
+    <Logger name="gcloud_stack_logging_not_from_gce"
+            level="trace"
+            additivity="false"
+            includeLocation="false">
+      <AppenderRef ref="gcloud_stack_logging_not_from_gce"/>
+    </Logger>
+    <Logger name="gcloud_stack_logging_from_gce"
+            level="trace"
+            additivity="false"
+            includeLocation="false">
+      <AppenderRef ref="gcloud_stack_logging_from_gce"/>
     </Logger>
     <Root level="debug"
           includeLocation="false">

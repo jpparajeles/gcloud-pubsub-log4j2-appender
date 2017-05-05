@@ -1,4 +1,4 @@
-package io.imaravic.log4j.pubsub.util;
+package io.imaravic.log4j.util;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.HttpBackOffIOExceptionHandler;

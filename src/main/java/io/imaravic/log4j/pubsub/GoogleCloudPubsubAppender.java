@@ -16,6 +16,7 @@
 
 package io.imaravic.log4j.pubsub;
 
+import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;

@@ -1,5 +1,6 @@
 package io.imaravic.log4j.pubsub;
 
+import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +52,7 @@ public class GoogleCloudPubsubIntegrationNotFromGceTest {
                                         eq(false),
                                         anyInt());
     assertFalse(credentialsCaptor.getValue().usingComputeCredentials());
-    assertEquals("serviceId@developer.gserviceaccount.com",
+    assertEquals("service1Id@developer.gserviceaccount.com",
                  credentialsCaptor.getValue().getServiceAccountId());
     assertEquals("file.p12",
                  credentialsCaptor.getValue().getServiceAccountPrivateKeyP12FileName());

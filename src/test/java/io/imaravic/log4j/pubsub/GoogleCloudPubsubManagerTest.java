@@ -6,6 +6,8 @@ import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.model.PublishRequest;
 import com.google.api.services.pubsub.model.PubsubMessage;
 
+import io.imaravic.log4j.util.GoogleCloudCredentials;
+import io.imaravic.log4j.pubsub.GoogleCloudPubsubManager;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AppenderLoggingException;
@@ -24,7 +26,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.IOException;
 import java.util.List;
 
-import io.imaravic.log4j.pubsub.util.GoogleCloudMetadata;
+import io.imaravic.log4j.util.GoogleCloudMetadata;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -57,7 +59,7 @@ public class GoogleCloudPubsubManagerTest {
                                              any(GoogleCloudCredentials.class),
                                              anyInt());
   
-    PowerMockito.doReturn("THIS WAS INTERCETED YAY").when(GoogleCloudPubsubManager.class, "testInterception");
+    
 
     when(googleCloudMetadata.fetchFromPath("project/project-id"))
         .thenReturn("project_id");
@@ -73,8 +75,7 @@ public class GoogleCloudPubsubManagerTest {
   public void testBootstrappingManagerFromGCEOnCompute() throws Exception {
     when(googleCloudMetadata.fetchFromPath("instance/attributes/"))
         .thenReturn("");
-    System.out.println("CALLING CONSTRUCTOR. SHOULD BE INTERCEPTED.");
-    System.out.println(googleCloudCredentials);
+    
     GoogleCloudPubsubManager googleCloudPubsubManager =
           PowerMockito.spy(new GoogleCloudPubsubManager("name",
                                                       httpTransport,

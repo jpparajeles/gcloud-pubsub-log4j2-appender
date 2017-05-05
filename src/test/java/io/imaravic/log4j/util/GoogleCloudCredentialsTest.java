@@ -1,4 +1,4 @@
-package io.imaravic.log4j.pubsub;
+package io.imaravic.log4j.util;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.compute.ComputeCredential;
@@ -6,6 +6,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.pubsub.PubsubScopes;
 
+import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

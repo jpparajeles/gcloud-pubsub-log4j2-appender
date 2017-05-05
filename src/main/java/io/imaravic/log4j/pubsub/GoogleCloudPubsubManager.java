@@ -29,6 +29,7 @@ import com.google.api.services.pubsub.model.PubsubMessage;
 import com.google.api.services.pubsub.model.Topic;
 import com.google.common.annotations.VisibleForTesting;
 
+import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractManager;
@@ -41,8 +42,8 @@ import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-import io.imaravic.log4j.pubsub.util.GoogleCloudMetadata;
-import io.imaravic.log4j.pubsub.util.RetryHttpInitializerWrapper;
+import io.imaravic.log4j.util.GoogleCloudMetadata;
+import io.imaravic.log4j.util.RetryHttpInitializerWrapper;
 
 public class GoogleCloudPubsubManager extends AbstractManager {
   private static final String APPLICATION_NAME = "GoogleCloudPubsub-Log4j2Appender";
@@ -66,12 +67,6 @@ public class GoogleCloudPubsubManager extends AbstractManager {
         createFullyDefinedTopicName(
             getGoogleCloudProjectId(googleCloudProjectId, googleCloudMetadata),
             topic);
-    System.out.println("INSIDE THE CONSTRUCTOR");
-    System.out.println("CALLING CREATE PUBSUBCLIENT BUT WOW");
-  
-    System.out.println(this.testInterception());
-  
-    System.out.println(googleCloudCredentials);
     this.pubsubClient = createPubsubClient(transport,
                                            googleCloudCredentials,
                                            maxRetryTimeMillis);
@@ -80,9 +75,6 @@ public class GoogleCloudPubsubManager extends AbstractManager {
     }
   }
   
-  private static String testInterception() {
-    return "NOT INTERCEPTED SORRY :(";
-  }
 
   private static String createFullyDefinedTopicName(final String googleCloudProjectId,
                                              final String topic) {

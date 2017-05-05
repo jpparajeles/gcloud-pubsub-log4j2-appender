@@ -1,10 +1,11 @@
-package io.imaravic.log4j.pubsub;
+package io.imaravic.log4j.stackdriver;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.logging.v2.Logging;
 import com.google.api.services.logging.v2.model.LogEntry;
 import com.google.api.services.logging.v2.model.WriteLogEntriesRequest;
+import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AppenderLoggingException;
@@ -59,8 +60,8 @@ public class GoogleCloudStackdriverManagerTest {
         any(GoogleCloudCredentials.class),
 //        anyString(),anyString(),
         anyInt());
-    PowerMockito.doReturn("THIS WAS INTERCEPTED yay").when(GoogleCloudStackdriverManager.class,
-      "testInterception");
+//    PowerMockito.doReturn("THIS WAS INTERCEPTED yay").when(GoogleCloudStackdriverManager.class,
+//      "testInterception");
     
   
     when(googleCloudCredentials.usingComputeCredentials())
@@ -71,8 +72,8 @@ public class GoogleCloudStackdriverManagerTest {
 
   @Test
   public void testBootstrappingManagerFromGCEOnCompute() throws Exception {
-    System.out.println(googleCloudCredentials.toString());
-    System.out.println("CALLING CONSTURCTOR, SHOULD BE INTERCEPTED");
+//    System.out.println(googleCloudCredentials.toString());
+//    System.out.println("CALLING CONSTURCTOR, SHOULD BE INTERCEPTED");
     GoogleCloudStackdriverManager googleCloudStackdriverManager =
         PowerMockito.spy(new GoogleCloudStackdriverManager("name",
             httpTransport,

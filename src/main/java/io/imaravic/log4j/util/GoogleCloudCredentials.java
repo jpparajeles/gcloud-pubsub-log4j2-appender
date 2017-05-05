@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.imaravic.log4j.pubsub;
+package io.imaravic.log4j.util;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -23,11 +23,6 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.repackaged.com.google.common.base.Preconditions;
 import com.google.common.annotations.VisibleForTesting;
-
-import org.apache.logging.log4j.core.config.Node;
-import org.apache.logging.log4j.core.config.plugins.Plugin;
-import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
-import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +62,7 @@ public class GoogleCloudCredentials {
   }
 
   @VisibleForTesting
-  String getServiceAccountPrivateKeyP12FileName() {
+  public String getServiceAccountPrivateKeyP12FileName() {
     return serviceAccountPrivateKeyP12File.getName();
   }
 
@@ -104,7 +99,7 @@ public class GoogleCloudCredentials {
   }
 
   @VisibleForTesting
-  static Builder newBuilder() {
+  public static Builder newBuilder() {
     return new Builder();
   }
 
@@ -154,7 +149,7 @@ public class GoogleCloudCredentials {
     }
 
     @VisibleForTesting
-    File getServiceAccountPrivateKeyP12File() {
+    public File getServiceAccountPrivateKeyP12File() {
       return new File(serviceAccountPrivateKeyP12FileName);
     }
   }

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.imaravic.log4j.pubsub;
+package io.imaravic.log4j.stackdriver;
 
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -28,7 +28,8 @@ import com.google.api.services.logging.v2.model.LogEntry;
 import com.google.api.services.logging.v2.model.MonitoredResource;
 import com.google.api.services.logging.v2.model.WriteLogEntriesRequest;
 import com.google.common.annotations.VisibleForTesting;
-import io.imaravic.log4j.pubsub.util.RetryHttpInitializerWrapper;
+import io.imaravic.log4j.util.GoogleCloudCredentials;
+import io.imaravic.log4j.util.RetryHttpInitializerWrapper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -41,9 +42,6 @@ import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-
-
-//import com.google.api.services.logging.v2.
 
 /**
  * Created by josep on 3/5/2017.
@@ -70,13 +68,14 @@ public class GoogleCloudStackdriverManager extends AbstractManager {
       throws GeneralSecurityException, IOException
   {
     super(null, name);
+    
     this.monitoredResource = resourceName;
     this.logName = logName;
   
-    System.out.println(this.testInterception());
-    
-    System.out.println("Calling constructor with credentials: " + googleCloudCredentials);
+//    System.out.println(testInterception());
     this.stackdriverLoggingClient = createStackdriverLoggingClient(transport,googleCloudCredentials,maxRetryTimeMillis);
+    
+//    System.out.println("Calling constructor with credentials: " + googleCloudCredentials);
   }
   
   private static String testInterception() {

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package io.imaravic.log4j.pubsub.util;
+package io.imaravic.log4j.util;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;

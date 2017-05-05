@@ -1,5 +1,6 @@
-package io.imaravic.log4j.pubsub;
+package io.imaravic.log4j.stackdriver;
 
+import io.imaravic.log4j.pubsub.GoogleCloudPubsubManager;
 import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,48 +11,45 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({GoogleCloudPubsubManager.class})
+@PrepareForTest({GoogleCloudStackdriverManager.class})
 @PowerMockIgnore({"javax.management.*", "javax.crypto.*"})
-public class GoogleCloudPubsubIntegrationFromGceTest {
+public class GoogleCloudStackdriverIntegrationNotFromGceTest {
   @Before
   public void setup() throws Exception {
-    mockStatic(GoogleCloudPubsubManager.class);
-//    mockStatic(GoogleCloudStackdriverAppender.class);
-    final GoogleCloudPubsubManager googleCloudPubsubManager = mock(GoogleCloudPubsubManager.class);
-    when(GoogleCloudPubsubManager.getManager(anyString(),
+    mockStatic(GoogleCloudStackdriverManager.class);
+    final GoogleCloudStackdriverManager googleCloudStackdriverManager = mock(GoogleCloudStackdriverManager.class);
+    when(GoogleCloudStackdriverManager.getManager(anyString(),
                                              any(GoogleCloudCredentials.class),
                                              anyString(),
                                              anyString(),
-                                             anyBoolean(),
-                                             anyInt())).thenReturn(googleCloudPubsubManager);
+                                             anyInt())).thenReturn(googleCloudStackdriverManager);
   }
 
   @Test
-  public void testSettingCloudLoggingFromGce() throws Exception {
-    LoggerFactory.getLogger("gcloud_logging_from_gce");
+  public void testSettingCloudLoggingNotFromGce() throws Exception {
+    LoggerFactory.getLogger("gcloud_stack_logging_not_from_gce");
     ArgumentCaptor<GoogleCloudCredentials> credentialsCaptor =
         ArgumentCaptor.forClass(GoogleCloudCredentials.class);
 
     verifyStatic();
-    GoogleCloudPubsubManager.getManager(eq("gcloud_logging_from_gce"),
+    GoogleCloudStackdriverManager.getManager(eq("gcloud_stack_logging_not_from_gce"),
                                         credentialsCaptor.capture(),
-                                        isNull(String.class),
                                         anyString(),
-                                        eq(true),
+                                        anyString(),
                                         anyInt());
-    assertTrue(credentialsCaptor.getValue().usingComputeCredentials());
+    assertFalse(credentialsCaptor.getValue().usingComputeCredentials());
+    assertEquals("service2Id@developer.gserviceaccount.com",
+                 credentialsCaptor.getValue().getServiceAccountId());
+    assertEquals("file2.p12",
+                 credentialsCaptor.getValue().getServiceAccountPrivateKeyP12FileName());
   }
 }

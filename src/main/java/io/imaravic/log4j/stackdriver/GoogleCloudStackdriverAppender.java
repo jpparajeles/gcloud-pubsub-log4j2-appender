@@ -1,5 +1,6 @@
-package io.imaravic.log4j.pubsub;
+package io.imaravic.log4j.stackdriver;
 
+import io.imaravic.log4j.util.GoogleCloudCredentials;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -13,8 +14,6 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.Requi
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.Serializable;
-
-import static io.imaravic.log4j.pubsub.GoogleCloudStackdriverManager.getManager;
 
 /**
  * Created by josep on 3/5/2017.
@@ -70,8 +69,8 @@ public class GoogleCloudStackdriverAppender extends AbstractAppender {
     @PluginBuilderAttribute
     private int maxRetryTimeMillis = 500;
 
-    @PluginBuilderAttribute
-    private String projectId;
+//    @PluginBuilderAttribute
+//    private String projectId;
 
     @PluginBuilderAttribute
     @Required
@@ -95,13 +94,13 @@ public class GoogleCloudStackdriverAppender extends AbstractAppender {
             filter,
             layout,
             ignoreExceptions,
-            getManager(name,
+            GoogleCloudStackdriverManager.getManager(name,
                 googleCloudCredentials,
                 resourceName,
                 logName,
                 maxRetryTimeMillis));
       } catch (final Throwable e) {
-        LOGGER.error("Error creating GoogleCloudPubsubAppender [{}]", name, e);
+        LOGGER.error("Error creating GoogleCloudStackdriverAppender [{}]", name, e);
         return null;
       }
     }
